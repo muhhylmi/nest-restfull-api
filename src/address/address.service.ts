@@ -62,7 +62,10 @@ export class AddressService {
       getRequest.contact_id,
     );
 
-    const address = await this.checkAddress(getRequest.contact_id, getRequest.address_id);
+    const address = await this.checkAddress(
+      getRequest.contact_id,
+      getRequest.address_id,
+    );
 
     return this.toAddressResponse(address);
   }
@@ -78,63 +81,77 @@ export class AddressService {
       throw new HttpException('Address is not found', 404);
     }
 
-    return address
+    return address;
   }
 
-  async update(user: User, request: UpdateAddressRequest): Promise<AddressResponse> {
-    const updateRequest: UpdateAddressRequest = this.validationService.validate(AddressValidation.UPDATE, request);
+  async update(
+    user: User,
+    request: UpdateAddressRequest,
+  ): Promise<AddressResponse> {
+    const updateRequest: UpdateAddressRequest = this.validationService.validate(
+      AddressValidation.UPDATE,
+      request,
+    );
 
     await this.contactService.checkContactExists(
       user.username,
       updateRequest.contact_id,
     );
 
-    let address = await this.checkAddress(updateRequest.contact_id, updateRequest.id);
+    let address = await this.checkAddress(
+      updateRequest.contact_id,
+      updateRequest.id,
+    );
 
     address = await this.prismaService.address.update({
       where: {
         id: address.id,
-        contact_id: address.contact_id
+        contact_id: address.contact_id,
       },
-      data: updateRequest
-    })
+      data: updateRequest,
+    });
 
     return this.toAddressResponse(address);
   }
 
-  async remove(user: User, request: RemoveAddressRequest): Promise<AddressResponse> {
-    const removeRequest: RemoveAddressRequest = this.validationService.validate(AddressValidation.REMOVE, request);
+  async remove(
+    user: User,
+    request: RemoveAddressRequest,
+  ): Promise<AddressResponse> {
+    const removeRequest: RemoveAddressRequest = this.validationService.validate(
+      AddressValidation.REMOVE,
+      request,
+    );
 
     await this.contactService.checkContactExists(
       user.username,
       removeRequest.contact_id,
     );
 
-    let address = await this.checkAddress(removeRequest.contact_id, removeRequest.address_id);
+    let address = await this.checkAddress(
+      removeRequest.contact_id,
+      removeRequest.address_id,
+    );
 
     address = await this.prismaService.address.delete({
       where: {
         id: address.id,
-        contact_id: address.contact_id
-      }
-    })
+        contact_id: address.contact_id,
+      },
+    });
 
     return this.toAddressResponse(address);
   }
 
   async list(user: User, contactId: number): Promise<AddressResponse[]> {
-    await this.contactService.checkContactExists(
-      user.username,
-      contactId,
-    );
+    await this.contactService.checkContactExists(user.username, contactId);
 
     const addresses = await this.prismaService.address.findMany({
       where: {
-        contact_id: contactId
-      }
-    })
+        contact_id: contactId,
+      },
+    });
 
     return addresses.map((address) => this.toAddressResponse(address));
   }
-
 }
