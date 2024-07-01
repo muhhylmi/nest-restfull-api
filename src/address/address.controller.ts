@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   Param,
@@ -14,6 +15,7 @@ import {
   AddressResponse,
   CreateAddressRequest,
   GetAddressRequest,
+  RemoveAddressRequest,
   UpdateAddressRequest,
 } from '../model/address.model';
 import { Auth } from '../common/auth.decorator';
@@ -64,6 +66,22 @@ export class AddressController {
     request.contact_id = contactId;
     request.id = addressId;
     const result = await this.addressService.update(user, request);
+    return {
+      data: result,
+    };
+  }
+
+  @Delete('/:addressId')
+  async remove(
+    @Auth() user: User,
+    @Param('contactId', ParseIntPipe) contactId: number,
+    @Param('addressId', ParseIntPipe) addressId: number,
+  ): Promise<WebResponse<AddressResponse>> {
+    const request: RemoveAddressRequest = {
+      contact_id: contactId,
+      address_id: addressId,
+    };
+    const result = await this.addressService.remove(user, request);
     return {
       data: result,
     };
