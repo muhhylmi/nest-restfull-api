@@ -66,8 +66,8 @@ export class UserController {
 
   @Delete('/current')
   @HttpCode(200)
-  async logout(@Auth() user: User): Promise<WebResponse<Boolean>> {
-    const result = await this.userService.logout(user);
+  async logout(@Auth() user: User): Promise<WebResponse<boolean>> {
+    await this.userService.logout(user);
     return {
       data: true,
     };

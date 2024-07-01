@@ -65,8 +65,8 @@ export class ContactController {
   async remove(
     @Auth() user: User,
     @Param('contactId', ParseIntPipe) contactId: number,
-  ): Promise<WebResponse<Boolean>> {
-    const result = await this.contactService.remove(user, contactId);
+  ): Promise<WebResponse<boolean>> {
+    await this.contactService.remove(user, contactId);
     return {
       data: true,
     };
